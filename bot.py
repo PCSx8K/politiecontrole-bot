@@ -5,6 +5,7 @@ from telegram.ext import (
 from flask import Flask, request
 import os
 import random
+import asyncio
 
 # ✅ Zet hier je bot token en webhook URL
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -27,7 +28,6 @@ CHANNEL_LINKS = {
 }
 
 user_captcha = {}  # tijdelijk opslag voor antwoorden
-
 app = Flask(__name__)  # voor webhook
 
 # ✅ /start
