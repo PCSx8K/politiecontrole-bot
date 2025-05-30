@@ -104,6 +104,8 @@ async def webhook_handler():
 
 # ✅ Start Telegram bot (als webhook)
 if __name__ == "__main__":
+    from telegram.ext import Application
+
     appbuilder = ApplicationBuilder().token(BOT_TOKEN)
     bot = appbuilder.build()
 
@@ -111,6 +113,14 @@ if __name__ == "__main__":
     bot.add_handler(CallbackQueryHandler(captcha, pattern="^captcha_start$"))
     bot.add_handler(CallbackQueryHandler(captcha_response, pattern="^captcha_"))
     bot.add_handler(CallbackQueryHandler(send_group_link, pattern="^group_"))
+
+    async def handle_webhook():
+        from flask import request
+        update = Update.de_json(request.get_json(force=True), bot.bot)
+        await bot.process_update(update)
+        return "ok"
+
+    app.post("/webhook")(lambda: asyncio.run(handle_webhook()))
 
     bot.run_webhook(
         listen="0.0.0.0",
